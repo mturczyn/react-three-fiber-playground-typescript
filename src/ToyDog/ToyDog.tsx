@@ -1,5 +1,5 @@
-import { useMemo } from 'react'
-import { Canvas } from '@react-three/fiber'
+import { useMemo, useRef } from 'react'
+import { Canvas, useFrame } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
 import * as THREE from 'three'
 
@@ -57,10 +57,12 @@ function Head() {
             </mesh>
 
             {/* Eyes */}
+            <Eye position={new THREE.Vector3(-0.3, 0.6, 0.9)} out={true} />
             <mesh position={[-0.3, 0.6, 0.9]}>
                 <sphereGeometry args={[0.1, 16, 16]} />
                 <meshStandardMaterial color="black" />
             </mesh>
+            <Eye position={new THREE.Vector3(0.3, 0.6, 0.9)} out={false} />
             <mesh position={[0.3, 0.6, 0.9]}>
                 <sphereGeometry args={[0.1, 16, 16]} />
                 <meshStandardMaterial color="black" />
@@ -78,5 +80,21 @@ function Head() {
                 <meshStandardMaterial color="black" />
             </mesh>
         </Canvas>
+    )
+}
+
+const Eye = ({ out, position }: { out: boolean; position: THREE.Vector3 }) => {
+    const eyeRef = useRef<THREE.Mesh>(null)
+
+    useFrame(() => {
+        if (!eyeRef.current) return
+        if (out) eyeRef.current.position.x -= 0.05
+        else eyeRef.current.position.x += 0.05
+    })
+    return (
+        <mesh ref={eyeRef} position={position}>
+            <sphereGeometry args={[0.1, 16, 16]} />
+            <meshStandardMaterial color="black" />
+        </mesh>
     )
 }
