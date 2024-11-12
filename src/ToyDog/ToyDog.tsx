@@ -4,17 +4,23 @@ import { OrbitControls } from '@react-three/drei'
 import * as THREE from 'three'
 
 export default function ToyDog() {
-    return <Head />
+    return (
+        <Canvas>
+            <Head />
+        </Canvas>
+    )
 }
 
-function Head() {
+export function Head() {
     // Custom Shader Material for Gradient Effect
     const gradientMaterial = useMemo(
         () =>
             new THREE.ShaderMaterial({
                 uniforms: {
-                    color1: { value: new THREE.Color('#ADD8E6') }, // Light blue color
-                    color2: { value: new THREE.Color('#FFFFFF') }, // White color
+                    // color1: { value: new THREE.Color('#ADD8E6') }, // Light blue color
+                    // color2: { value: new THREE.Color('#FFFFFF') }, // White color
+                    color1: { value: new THREE.Color('#0080FF') },
+                    color2: { value: new THREE.Color('#BC45F7') },
                 },
                 vertexShader: `
             varying vec2 vUv;
@@ -35,6 +41,8 @@ function Head() {
         []
     )
 
+    const groupRef = useRef<THREE.Group>(null)
+
     // Define the points for the mouth curve
     const mouthCurve = useMemo(() => {
         const path = new THREE.CatmullRomCurve3([
@@ -45,41 +53,46 @@ function Head() {
         return path
     }, [])
 
+    useFrame(() => {
+        if (!groupRef.current) return
+    })
+
     return (
-        <Canvas>
+        <>
             <OrbitControls />
             <ambientLight intensity={0.5} />
             <pointLight position={[10, 10, 10]} />
+            <group ref={groupRef}>
+                {/* Head with Gradient Material */}
+                <mesh material={gradientMaterial} position={[0, 0.5, 0]}>
+                    <sphereGeometry args={[1, 32, 32]} />
+                </mesh>
 
-            {/* Head with Gradient Material */}
-            <mesh material={gradientMaterial} position={[0, 0.5, 0]}>
-                <sphereGeometry args={[1, 32, 32]} />
-            </mesh>
+                {/* Eyes */}
+                {/* <Eye position={new THREE.Vector3(-0.3, 0.6, 0.9)} out={true} />
+            <Eye position={new THREE.Vector3(0.3, 0.6, 0.9)} out={false} /> */}
+                <mesh position={[-0.3, 0.6, 0.9]}>
+                    <sphereGeometry args={[0.1, 16, 16]} />
+                    <meshStandardMaterial color="black" />
+                </mesh>
+                <mesh position={[0.3, 0.6, 0.9]}>
+                    <sphereGeometry args={[0.1, 16, 16]} />
+                    <meshStandardMaterial color="black" />
+                </mesh>
 
-            {/* Eyes */}
-            <Eye position={new THREE.Vector3(-0.3, 0.6, 0.9)} out={true} />
-            <mesh position={[-0.3, 0.6, 0.9]}>
-                <sphereGeometry args={[0.1, 16, 16]} />
-                <meshStandardMaterial color="black" />
-            </mesh>
-            <Eye position={new THREE.Vector3(0.3, 0.6, 0.9)} out={false} />
-            <mesh position={[0.3, 0.6, 0.9]}>
-                <sphereGeometry args={[0.1, 16, 16]} />
-                <meshStandardMaterial color="black" />
-            </mesh>
+                {/* Nose */}
+                <mesh position={[0, 0.4, 0.95]}>
+                    <sphereGeometry args={[0.08, 16, 16]} />
+                    <meshStandardMaterial color="black" />
+                </mesh>
 
-            {/* Nose */}
-            <mesh position={[0, 0.4, 0.95]}>
-                <sphereGeometry args={[0.08, 16, 16]} />
-                <meshStandardMaterial color="black" />
-            </mesh>
-
-            {/* Mouth Line */}
-            <mesh>
-                <tubeGeometry args={[mouthCurve, 20, 0.03, 8, false]} />
-                <meshStandardMaterial color="black" />
-            </mesh>
-        </Canvas>
+                {/* Mouth Line */}
+                <mesh>
+                    <tubeGeometry args={[mouthCurve, 20, 0.03, 8, false]} />
+                    <meshStandardMaterial color="black" />
+                </mesh>
+            </group>
+        </>
     )
 }
 
@@ -91,6 +104,7 @@ const Eye = ({ out, position }: { out: boolean; position: THREE.Vector3 }) => {
         if (out) eyeRef.current.position.x -= 0.05
         else eyeRef.current.position.x += 0.05
     })
+
     return (
         <mesh ref={eyeRef} position={position}>
             <sphereGeometry args={[0.1, 16, 16]} />

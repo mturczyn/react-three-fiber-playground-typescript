@@ -1,9 +1,17 @@
 import SceneWithBox from './FirstBasicScene'
-import PawScene from './Paw'
-import ToyDog from './ToyDog/ToyDog'
+import FrontLegs from './FrontLegs'
+import { FrontLeg } from './FrontLegs/FrontLeg'
+import { FrontPaw } from './FrontLegs/FrontPaw'
+import { ShowcaseScene } from './ShowcaseScene'
+import ToyDog, { Head } from './ToyDog/ToyDog'
 
 function App() {
-    return <PawScene />
+    return (
+        <ShowcaseScene>
+            <FrontLegs />
+            <Head />
+        </ShowcaseScene>
+    )
 }
 
 export default App
