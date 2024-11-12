@@ -61,7 +61,7 @@ const Hearth = () => {
 
     return (
         <mesh ref={ref} rotation={[Math.PI, 0, 0]} position={[0, 0, -10]}>
-            <meshLambertMaterial color="red" opacity={0.5} wireframe />
+            <meshLambertMaterial color="red" opacity={0.5} />
             <extrudeGeometry args={[shape, extrudeSettings]} />
         </mesh>
     )
